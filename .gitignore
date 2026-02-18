@@ -1,0 +1,11 @@
+# macOS junk
+.DS_Store
+
+
+#notes
+.session_notes
+.session-notes
+signal-data/
+.venv/
+.env
+

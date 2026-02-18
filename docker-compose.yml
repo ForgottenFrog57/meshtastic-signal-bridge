@@ -1,0 +1,29 @@
+services:
+  mesh-signal-bridge:
+    build: .
+    container_name: mesh-signal-bridge
+    privileged: true
+    
+    env_file:
+      - .env
+
+    environment:
+      - MESH_DEVICE
+      - MESH_CHANNEL_INDEX
+      - SIGNAL_GROUP_ID
+      - SIGNAL_POLL_INTERVAL
+      - LOG_LEVEL
+      - SIGNAL_SHORT_NAMES
+      - TZ
+      - NODE_DB_WARMUP
+      - MESH_TO_SIGNAL
+      - RELAY_MODE
+      - DEV_MODE
+      - SIGNAL_FILTER_ENABLED
+      - SIGNAL_FILTER_CHARS
+
+    volumes:
+      - ./signal-data:/root/.local/share/signal-cli
+      - /dev:/dev
+
+    restart: unless-stopped

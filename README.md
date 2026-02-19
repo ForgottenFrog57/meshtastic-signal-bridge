@@ -17,7 +17,7 @@ The original version of this repository focused primarily on mesh-to-signal traf
 
 The original creator included several features that were notably counter-productive in that context.  The default run mode is now "mode2" (signal-to-mesh only).  This is the only run mode we currently recommend for community response.  The commands to allow mesh users to disable the bridge or switch modes are inaccessible from mode2.  We've included an environment option for disabling reads of the meshtastic queue entirely, tho we suspect there's still some room for improvement on preventing abusive mesh users from triggering wasteful message processing.
 
-We've also included the option to let users opt-in to message forwarding by adding emojis to their username.  This may seem like an odd choice, but "emoji flagging" proved to be a very effective improptu method of assigning roles in the context of signal-based community response, and this filter mode is intended to leverage this natural community practice.
+We've also included the option to let users opt-in to message forwarding by adding emojis to their username.  This may seem like an odd choice, but "emoji flagging" proved to be a very effective improptu method of assigning roles in the context of signal-based community response, and this filter mode is intended to leverage this natural community practice.  See the '.env.example' file for some more details.
 
 ---
 
@@ -195,7 +195,7 @@ The logs will guide you through the initial setup.
 ---
 
 ## Environment Variables
-
+#!update
 See `.env.example`
 
 | Variable | Purpose | Default
@@ -214,7 +214,7 @@ See `.env.example`
 ## Commands
 
 ### Mesh Commands
-
+#!add further details
 Commands can be initiated by all mesh users using the format **![command]**, or **!help [command]**. The bridge will respond back to the mesh channel for each given command, but nothing command-related will be relayed to Signal.
 
 | Command | Purpose |
@@ -241,21 +241,10 @@ Signal users have access to the **!status** command to check the current configu
 
 ---
 
-## Use Case
-
-**meshtastic-signal-bridge** is intended to run as a complement to a primary Signal group in the form of a private, backup communication method between trusted individuals. In practice, this is how it might work:
-1. A group of known people regularly communicate and coordinate via Signal for covert operations.
-2. A subset (or all) of those people have access to portable Meshtastic nodes.
-3. meshtastic-signal-bridge is running continuously, deployed by a trusted member of the group in a city with an established mesh. 
-4. People who may find themselves in scenarios where communication could be disrupted would carry Meshtastic nodes with them, such as at a protest, demonstration, or action. In the unlikely event that communication is disrupted for people carrying Meshtastic nodes, they could use their node as a backup communication method to facilitate communication with the broader Signal group, alerting them of their current status, location, etc.
-5. Alternatively, the bridge may be utilized for privacy-focused users who wish to temporarily communicate with others while using their phone in Airplane Mode (except BLE). This could be due to suspicion of tracking via methods such as [obtaining mobile location data](https://www.eff.org/deeplinks/2022/06/how-federal-government-buys-our-cell-phone-location-data) or using [IMSI catchers](https://www.aclu.org/news/privacy-technology/surreal-stingray-secrecy-uncovering-the-fbis-surveillance-tech-secrecy-agreements) (e.g. Stingray devices) to track users.
-
----
-
 
 ### 🔴 Security and Trust
 
-It should go without saying, but anyone added to a signal group or with the key to a meshtastic group can read all of the messages inside of them.  And since theres really no keeping other folks from getting a hold of that meshtastic key and watching the content anonymously, we recommend that the bridge only be employed for **community notitications**.  Only deploy this bot to signal chats that folks would be comfortable broadcasting, leave it out of more private groups.
+It should go without saying, but anyone added to a signal group or with the key to a meshtastic channel can read all of the messages inside of them.  And since theres really no keeping other folks from getting a hold of that meshtastic key and watching the content anonymously, we recommend that the bridge only be employed for **community notitications**.  Only deploy this bot to signal chats that folks would be comfortable broadcasting, leave it out of more private groups.
 
 ---
 

@@ -86,12 +86,15 @@ This project assumes that:
 
 ## Installation
 
-### Docker Compose (recommended)
+### Docker
 1. Create a project directory: `/meshtastic-signal-bridge`
-2. Create an `.env` file in the root directory with the following contents (it's okay if you don't know `SIGNAL_GROUP_ID` or `MESH_DEVICE` yet, the container will help you find them on first startup):
+2. Create an `.env` file in the root directory with the following contents; see .env.example for additional info:
 ```
 # Required for Signal - GroupIDs listed on startup after Signal auth
+## You can also provide a string to match with a signal group name.  We recommend switching to SIGNAL_GROUP_ID after testing is complete, as signal group names are subject to change.
+##SIGNAL_GROUP_ID takes precedence over SIGNAL_GROUP_NAME if both are defined.
 SIGNAL_GROUP_ID=
+#SIGNAL_GROUP_NAME=
 
 # Required for Meshtastic - MESH_DEVICE USB path listed on startup
 MESH_DEVICE=
@@ -103,6 +106,10 @@ SIGNAL_POLL_INTERVAL=2
 NODE_DB_WARMUP=10
 TZ=America/Chicago
 LOG_LEVEL=INFO
+
+#Username Filters - see .env.example for more info
+#SINGAL_FILTER_ENABLED=true
+#SIGNAL_FILTER_CHARS=
 ```
 3. Create a `.docker-compose.yml` file in the root directory with the following contents:
 
@@ -124,56 +131,18 @@ services:
       - SIGNAL_SHORT_NAMES
       - TZ
       - NODE_DB_WARMUP
+      - MESH_TO_SIGNAL
+      - RELAY_MODE
+      - DEV_MODE
+      - SIGNAL_FILTER_ENABLED
+      - SIGNAL_FITLER_CHARS
     volumes:
       - ./signal-data:/root/.local/share/signal-cli
-    devices:
-      - ${MESH_DEVICE}:${MESH_DEVICE}
+      - /dev:/dev
+    restart: unless-stopped
 ```
-4. "Compose up" the container to start it for the first time.
-5. Open the logs to start the onboarding process, explained below under [Post-installation](https://github.com/ccwod/meshtastic-signal-bridge?tab=readme-ov-file#post-installation).
-
-
----
-
-### Docker
-
-1. Create a project directory: `/meshtastic-signal-bridge`
-2. Create an `.env` file in the root directory with the following contents (it's okay if you don't know `SIGNAL_GROUP_ID` yet, the container will help you find it on first startup):
-```
-# Required for Signal - GroupIDs listed on startup after Signal auth
-SIGNAL_GROUP_ID=
-
-# Required for Meshtastic - MESH_DEVICE USB path listed on startup
-MESH_DEVICE=
-MESH_CHANNEL_INDEX=1
-
-# Optional tuning
-SIGNAL_SHORT_NAMES=TRUE
-SIGNAL_POLL_INTERVAL=2
-NODE_DB_WARMUP=10
-TZ=America/Chicago
-LOG_LEVEL=INFO
-```
-3. Find your USB device path that the mesh node is mapped to, such as `/dev/ttyACM0` or `/dev/ttyUSB1`. Use that in place of `[DEVICE PATH]:[DEVICE PATH]` below.
-4. Run the initial setup:
-```
-docker run --rm -it \
-  --name meshtastic-signal-bridge \
-  --privileged \
-  --env-file .env \
-  -v $(pwd)/signal-data:/root/.local/share/signal-cli \
-  --device [DEVICE PATH]:[DEVICE PATH] \
-  ghcr.io/ccwod/meshtastic-signal-bridge:latest
-```
-5. Open the logs to start the onboarding process, explained below under [Post-installation](https://github.com/ccwod/meshtastic-signal-bridge?tab=readme-ov-file#post-installation).
-
----
-
-### Unraid
-
-Community Apps version coming soon.
-
-In the mean time, you can use the Docker Compose plugin on Unraid and follow the Docker Compose installation instructions above and it will work.
+4. Build and deploy your container with 'sudo docker compose up -d --build'
+5. Open the logs to start the onboarding process with 'sudo docker logs -f mesh-signal-bridge', explained below under [Post-installation](https://github.com/ccwod/meshtastic-signal-bridge?tab=readme-ov-file#post-installation).
 
 ---
 
@@ -183,7 +152,6 @@ In the mean time, you can use the Docker Compose plugin on Unraid and follow the
 
 1. Prompt you to link your Signal account using a QR code.
 2. Help you find your Signal group ID.
-3. Help you detect your Meshtastic USB device if it is plugged in, powered on, and accessible by Docker via USB (Docker Compose only).
 
 The logs will guide you through the initial setup.
 
@@ -201,21 +169,28 @@ See `.env.example`
 | Variable | Purpose | Default
 |---|---|---|
 | `SIGNAL_GROUP_ID` | ID of the target Signal group to communicate with, provided during startup after Signal account auth | `NONE` |
-| `MESH_DEVICE` | USB path of the connected Meshtastic device. Listed on startup, typically something like `/dev/ttyACM*` or `/dev/ttyUSB*` | `NONE` |
+| `SIGNAl_GROUP_NAME` | String for matching the name of the Signal group; if used the container will post the matching name and group id it found to the logs; SIGNAL_GROUP_ID takes precedence, and is recomended for prod operation
+| `MESH_DEVICE` | USB path of the connected Meshtastic device. Listed on startup, typically something like `/dev/ttyACM*` or `/dev/ttyUSB*`; if you set a udev rule for your host it should be `/dev/meshtastic` | `NONE` |
 | `MESH_CHANNEL_INDEX` | Channel index # for Meshtastic device to communicate on (0=PRIMARY), (1=SECOND), (2=THIRD), etc... 0 not allowed | `1` |
 | `SIGNAL_SHORT_NAMES` | Signal display name based on Signal profile name. `TRUE`=first string of name, like `[Joe]`. `FALSE`=full Signal profile name, like `[Joe J Lastname]`.  | `TRUE` |
 | `SIGNAL_POLL_INTERVAL` | How often signal-cli is polled for new received Signal messages, seconds. Recommend do not change. | `2` |
 | `NODE_DB_WARMUP` | How many seconds to wait on for Meshtastic node list to populate on bridge startup, seconds. Recommend do not change. | `10` |
 | `TZ` | Timezone used for logging. Common US options: `America/New_York`, `America/Chicago`, `America/Denver`, `America/Los_Angeles`.  | `America/Chicago` |
 | `LOG_LEVEL` | Log level | `INFO` |
-
+| `MESH_TO_SIGNAL` | Blocks traffic from mesh entirely when set to `off`, including all commands; this is reccomended if youre running a forward to a general notification channel: `on`, `off`, `echo` | `on` |
+| `SIGNAL_FILTER_ENABLED` | If `true`, the bridge will only forward messages from users w the filter characters included in their username; emojis are the reccomended flag here | `false` |
+| `SIGNAL_FILTER_CHARS` | List of characters to search usernames for; unicode is accepted, and emojis are the recommended flags here | `NONE` |
+| `DEV_MODE` | Requires a '🔧' in signal usernames to forward messages, also tied to some other behavioral changes
+| `RELAY_MODE` | Sets operation mode; mode 2, signal-to-mesh only, is currently the only recommended mode for non hobby/testing uses | `1`, `2`, `3` |
+ 
 ---
 
 ## Commands
 
 ### Mesh Commands
-#!add further details
 Commands can be initiated by all mesh users using the format **![command]**, or **!help [command]**. The bridge will respond back to the mesh channel for each given command, but nothing command-related will be relayed to Signal.
+
+
 
 | Command | Purpose |
 |---|---|
@@ -230,6 +205,8 @@ Commands can be initiated by all mesh users using the format **![command]**, or 
 | `!mode3` | Mesh → Signal **ONLY** via `!relay [message]`. Signal → Mesh relay **DISABLED**. |
 | `!status` | Show relay state (`on` or `off`) and mode |
 | `!relay` | Only used for Modes[2,3]. Explicitly relays messages from Mesh to Signal, otherwise they are not automatically relayed in those modes. |
+
+**NOTE** for security purposes, `!mode1`, `!mode2`, `!mode3`, `!on` and `!off` are all disabled in mode 2.  If MESH_TO_SIGNAL=off, all mesh commands will all fail silently.
 
 ### Signal Command
 
@@ -250,11 +227,8 @@ It should go without saying, but anyone added to a signal group or with the key 
 
 ### 🔴 Only tested on a limited hardware configuration
 
-- Built and tested using Docker Compose on **Unraid**
+- Built and tested using Docker
 - Tested with **SenseCap T1000-E**
-- Designed for Docker first
-- May work on other configurations — try at your own risk
-
 
 ---
 

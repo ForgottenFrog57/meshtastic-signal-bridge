@@ -708,7 +708,7 @@ def main():
     log.info("======================================")
 
     if MESH_TO_SIGNAL != "off":
-s        pub.subscribe(on_mesh_message, "meshtastic.receive")
+        pub.subscribe(on_mesh_message, "meshtastic.receive")
 
     poll_signal_loop(iface)
 

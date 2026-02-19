@@ -49,7 +49,7 @@ This project assumes that:
 
 - You have a basic understanding of Meshtastic, node configuration, and node placement 
 - You already have access to a **city-wide or well-covered Meshtastic mesh** (check out [local Meshtastic groups](https://meshtastic.org/docs/community/local-groups))
-- You have Docker Compose (recommended) or Docker running on a Linux host, such as:
+- You have Docker running on a Linux host, such as:
   - NAS (e.g. Unraid)
   - Home server
   - Raspberry Pi
@@ -190,8 +190,6 @@ See `.env.example`
 ### Mesh Commands
 Commands can be initiated by all mesh users using the format **![command]**, or **!help [command]**. The bridge will respond back to the mesh channel for each given command, but nothing command-related will be relayed to Signal.
 
-
-
 | Command | Purpose |
 |---|---|
 | `!test` | Verify the bridge is online by sending the hop distance from user to bridge |
@@ -218,7 +216,6 @@ Signal users have access to the **!status** command to check the current configu
 
 ---
 
-
 ### 🔴 Security and Trust
 
 It should go without saying, but anyone added to a signal group or with the key to a meshtastic channel can read all of the messages inside of them.  And since theres really no keeping other folks from getting a hold of that meshtastic key and watching the content anonymously, we recommend that the bridge only be employed for **community notitications**.  Only deploy this bot to signal chats that folks would be comfortable broadcasting, leave it out of more private groups.
@@ -228,7 +225,7 @@ It should go without saying, but anyone added to a signal group or with the key 
 ### 🔴 Only tested on a limited hardware configuration
 
 - Built and tested using Docker
-- Tested with **SenseCap T1000-E**
+- Tested with **SenseCap T1000-E** flashed with meshtastic and conencted via USB
 
 ---
 

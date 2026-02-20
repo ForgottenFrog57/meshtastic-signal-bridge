@@ -344,7 +344,7 @@ The original repo this is based on was self-proclaimed as "vibe coded".  At leas
 
 The world is changing, like weirdly fast.  Its now possible to generate code with less effort than it takes a human being to read and understand it.  This can lead to a new imbalance between contributors, reviewers and users; in other words, we understand that its possible to effectively waste another human beings time and attention by generating code without demonstrating an ownership and effort equal to that asked by the act of making a pull request.
 
-For the time being, we can only state that we have done the work to review what we're offering and that we are confident that we are respecting your time when we ask you to consider using it.  We ask the same from any other contributors who use choose to use AI to help them create potential improvements.
+For the time being, we can only state that we have done the work to review and test what we're offering and that we are confident that we are respecting your time when we ask you to consider using it.  We ask the same from any other contributors who use choose to use AI to help them create potential improvements.
 
  ..............................................................:::::::.:::..::::::::....:....:::::::::::.............................. ... .......:::::..................... 
  ........................................... ........................................................................................................ ...................... 

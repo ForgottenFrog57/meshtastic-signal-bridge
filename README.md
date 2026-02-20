@@ -107,6 +107,9 @@ NODE_DB_WARMUP=10
 TZ=America/Chicago
 LOG_LEVEL=INFO
 
+#RELAY_MODE=2
+#DEV_MODE=false
+
 #Username Filters - see .env.example for more info
 #SINGAL_FILTER_ENABLED=true
 #SIGNAL_FILTER_CHARS=
